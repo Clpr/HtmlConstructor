@@ -7,8 +7,8 @@ module HtmlConstructor
     export new_tag, add!, pop!
     export add_doublequotations, add_pairedtags
     # tag generators (common)
-    export hr, br, sup, sub, bold, italic, underline, deleteline, tag_font
-    export h1, h2, h3, h4, h5, h6
+    export tag_hr, tag_br, tag_sup, tag_sub, tag_b, tag_i, tag_u, tag_del, tag_font
+    export tag_h1, tag_h2, tag_h3, tag_h4, tag_h5, tag_h6
     export tag_div, tag_a, tag_ol, tag_ul
     # tag generators (form)
     export tag_form, tag_input_text, tag_input_number, tag_input_radio, tag_input_checkbox

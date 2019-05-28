@@ -13,27 +13,47 @@ const CONS = (
 )
 
 
+# ------------------- synonym def
+StrOrTag = Union{String,AbstractHtmlTag}
+StrOrNo = Union{String,Nothing}
+HtmlTagVector = Vector{T} where T <: AbstractHtmlTag
+
+
+
 
 # ------------------- 成对tag: <tag>content</tag>
 mutable struct PairedHtmlTag <: AbstractHtmlTag
     tag::String  # tag name, e.g. table, head
-    id::String  # tag id
-    class::String  # tag class applied
-    style::String  # CSS style
+    id::StrOrNo  # tag id
+    class::StrOrNo  # tag class applied
+    style::StrOrNo  # CSS style
     singleAttributes::Vector{String}  # single attribute, e.g. required
     pairedAttributes::Dict{String,String}  # paired attributes, e.g. min=2000, width=\"100\"
-    content::Vector{T} where T <: AbstractHtmlTag  # content between <tag> and </tag>
-    # NOTE: html标签里的引号'和"要求显式写出
+    content::HtmlTagVector  # content between <tag> and </tag>
+    # -------------
+    function PairedHtmlTag(tag::String, id::StrOrNo, class::StrOrNo, style::StrOrNo;
+        singleAttributes::Vector{String} = String[],
+        pairedAttributes::Dict{String,String} = Dict{String,String}(),
+        content::HtmlTagVector = AbstractHtmlTag[] )
+        tag == "" ?  (throw(ErrorException("empty tag name found"))) : nothing
+        new(tag,id,class,style,singleAttributes,pairedAttributes,content)
+    end
 end
 # ------------------- 单个标签tag: <tag />
 mutable struct SingleHtmlTag <: AbstractHtmlTag
     tag::String  # tag name, e.g. table, head
-    id::String  # tag id
-    class::String  # tag class applied
-    style::String  # CSS style
+    id::StrOrNo  # tag id
+    class::StrOrNo  # tag class applied
+    style::StrOrNo  # CSS style
     singleAttributes::Vector{String}  # single attribute, e.g. required
     pairedAttributes::Dict{String,String}  # paired attributes, e.g. min=2000, width=\"100\"
-    # NOTE: html标签里的引号'和"要求显式写出
+    # -------------
+    function SingleHtmlTag(tag::String, id::StrOrNo, class::StrOrNo, style::StrOrNo;
+        singleAttributes::Vector{String} = String[],
+        pairedAttributes::Dict{String,String} = Dict{String,String}() )
+        tag == "" ?  (throw(ErrorException("empty tag name found"))) : nothing
+        new(tag,id,class,style,singleAttributes,pairedAttributes)
+    end
 end
 # -------------------- 空白tag：blank tag, (a placeolder for pure string contents)
 struct BlankHtmlTag <: AbstractHtmlTag

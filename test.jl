@@ -2,7 +2,6 @@
 
   import HtmlConstructor
 
-
 # --------- sample final html text
 sample = """
 <html>

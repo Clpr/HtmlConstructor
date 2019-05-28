@@ -1,17 +1,17 @@
 # general methods defined
 
 
+
+
 # -------------- general method: create tag string from a tag type instance
 function new_tag( d::SingleHtmlTag )
     local res::Vector = String[ "<" * d.tag, ]
-    # add id
-    if d.id != ""; push!(res, "id=" * add_doublequotations(d.id) ); end;
-    # add class
-    if d.class != ""; push!(res, "class=" * add_doublequotations(d.class) ); end;
-    # add CSS style
-    if d.style != ""; push!(res, "style=" * add_doublequotations(d.style) ); end;
+    # add id, class, inline CSS style
+    isa(d.id, Nothing) ? nothing : push!(res, "id=" * add_doublequotations(d.id) )
+    isa(d.class, Nothing) ? nothing : push!(res, "class=" * add_doublequotations(d.class) )
+    isa(d.style, Nothing) ? nothing : push!(res, "style=" * add_doublequotations(d.style) )
     # add paired attributes
-    append!(res, [ key * "=" * value for (key,value) in d.pairedAttributes ])
+    append!(res, [ key * "=" * add_doublequotations(value) for (key,value) in d.pairedAttributes ])
     # add single attributes
     append!(res, d.singleAttributes)
     # close the tag
@@ -22,29 +22,27 @@ end # new tag
 # --------
 function new_tag( d::PairedHtmlTag )
     local res::Vector = String[ "<" * d.tag, ]
-    # add id
-    if d.id != ""; push!(res, "id=" * add_doublequotations(d.id) ); end;
-    # add class
-    if d.class != ""; push!(res, "class=" * add_doublequotations(d.class) ); end;
-    # add CSS style
-    if d.style != ""; push!(res, "style=" * add_doublequotations(d.style) ); end;
+    # add id, class, inline CSS style
+    isa(d.id, Nothing) ? nothing : push!(res, "id=" * add_doublequotations(d.id) )
+    isa(d.class, Nothing) ? nothing : push!(res, "class=" * add_doublequotations(d.class) )
+    isa(d.style, Nothing) ? nothing : push!(res, "style=" * add_doublequotations(d.style) )
     # add paired attributes
-    append!(res, [ key * "=" * value for (key,value) in d.pairedAttributes ])
+    append!(res, [ key * "=" * add_doublequotations(value) for (key,value) in d.pairedAttributes ])
     # add single attributes
     append!(res, d.singleAttributes)
     # close the tag
-    push!(res, ">")
+    push!(res, "/>")
     # add contents between paired tags & the right tag
-    if isa(d.content, String)
-        push!(res, d.content)
-    elseif isa(d.content, Vector)
-        for x in d.content
-            # if a list of tags, convert them to strings then add to the list
-            isa(x, AbstractHtmlTag) ? push!(res, new_tag(x)) : nothing
+    for tmptag in d.content
+        if isa(tmptag, BlankHtmlTag)
+            push!(res, tmptag.content)
+        elseif isa(tmptag, SingleHtmlTag)
+            push!(res, new_tag(tmptag))
+        else
+            push!(res, new_tag(tmptag)) # NOTE: recursive calling
         end
-    else
-        throw(ErrorException("invalid content type(s)"))
     end
+    # add </tag>
     push!(res, "</" * d.tag * ">" )
     # join the tag as a string, each part is separated by a space
     return join(res, " ")::String
@@ -174,7 +172,13 @@ add_pairedtags( tag::String, content::String ) = "<" * tag * ">" * content * "</
 add explicit double quotations to the given string,
 e.g. add_doublequotations("fuck") --> "\"fuck\""
 """
-add_doublequotations( s::String ) = "\"" * s * "\""
+add_doublequotations( s::String ) = begin
+    if s[1] == '"' == s[end]
+        return s::String
+    else
+        return ( "\"" * s * "\"" )::String
+    end
+end # add_doublequotations
 
 
 
