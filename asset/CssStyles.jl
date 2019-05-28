@@ -2,6 +2,11 @@
 
 
 
+
+
+
+
+
 # ---------------- add <style></style>
 """
     tag_style( CssStylesStr::String ; type::String = "text/css" )
@@ -9,9 +14,9 @@
 add a pair of <style> tags for your CSS style string.
 """
 tag_style( CssStylesStr::String ; type::String = "text/css" ) = begin
-    return new_tag(PairedHtmlTag(
+    return PairedHtmlTag(
         "style", "", "", "", String[], Dict( "type" => add_doublequotations(type) ), CssStylesStr
-    ))
+    )
 end
 
 
@@ -27,6 +32,15 @@ link_css( href::String ) = tag_link( "stylesheet", "text/css", href )
 
 
 
+# ------------------------ JS script string
+"""
+    CSS_str(script)
+"""
+macro CSS_str(script)
+    return quote
+        tag_style( "\n" * string($script) * "\n" )
+    end
+end # CSS_str
 
 
 

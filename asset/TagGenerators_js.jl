@@ -10,7 +10,7 @@
 """
 function tag_script( script::String ; type::String = add_doublequotations("text/javascript") )
     local tmptype::String = ( type[1] == '\"' ? type : add_doublequotations(type)  )
-    return new_tag(PairedHtmlTag( "script", "", "", "", String[], Dict("type" => tmptype), script ))::String
+    return PairedHtmlTag( "script", "", "", "", String[], Dict("type" => tmptype), script )
 end # tag_script
 
 

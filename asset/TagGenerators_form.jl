@@ -10,7 +10,7 @@ creates a <form>content</form> tag string.
 please organize your contents before packaging them in a form block.
 """
 function tag_form( content::String ; id::String = "", class::String = "", style::String = "" )
-    return new_tag(PairedHtmlTag( "form", id, class, style, String[], Dict(), content ))::String
+    return PairedHtmlTag( "form", id, class, style, String[], Dict(), content )
 end # tag_form
 
 
@@ -37,8 +37,7 @@ function tag_input_text( name::String ;
         "type" => add_doublequotations("text"),
     )
     # new a SingleHtmlTag
-    res = SingleHtmlTag("input", id, class, style, singleattrs, pairedattrs)
-    return new_tag(res)
+    return SingleHtmlTag("input", id, class, style, singleattrs, pairedattrs)
 end # tag_input_text
 
 # -------------
@@ -67,8 +66,7 @@ function tag_input_number( name::String ;
         "type" => add_doublequotations("number"),
     )
     # new a SingleHtmlTag string
-    res = SingleHtmlTag("input", id, class, style, singleattrs, pairedattrs)
-    return new_tag(res)
+    return SingleHtmlTag("input", id, class, style, singleattrs, pairedattrs)
 end # tag_input_text
 
 # -------------
@@ -77,7 +75,7 @@ end # tag_input_text
     tag_input_radio( name::String, options::Dict{T,String} where T <: Any ; label_id::String = "id_labelfor_" * name, label_class::String = "", label_style::String = "", id::String = "id_" * name, class::String = "", style::String = "", whichlabel_checked::Union{String,Nothing} = nothing )
 
 1. :options should be a Dict whose keys are the contents displayed as label, and the values are the "value" attribute recorded in <input value="">
-2. returns a **LIST** of "<label></label><input />" strings, i.e. radios following a label
+2. returns a **LIST** of PairedHtmlTag
 """
 function tag_input_radio( name::String,
     options::Dict{T,String} where T <: Any ; # label text => radio (input) value
@@ -86,7 +84,7 @@ function tag_input_radio( name::String,
     whichlabel_checked::Union{String,Nothing} = nothing )  # which one (label text) (1st, 2nd ...) option should be checked by default
     # -------------
     # a tag list
-    local res = String[]
+    local res = PairedHtmlTag[]
     # make tags
     for labelstr in keys(options)
         local tmpSingleAttr4input::Vector{String} = whichlabel_checked == labelstr ? String["checked",] : String[]
@@ -97,12 +95,12 @@ function tag_input_radio( name::String,
                 "value" => add_doublequotations(options[labelstr]),
             )
         ))
-        local out_labtag = new_tag(PairedHtmlTag( "label",
+        local out_labtag = PairedHtmlTag( "label",
             label_id, label_class, label_style, [], Dict(),
-            labelstr * in_radiotag ))
+            labelstr * in_radiotag )
         push!(res, out_labtag)
     end # labelstr
-    return res::Vector{String}
+    return res::Vector{PairedHtmlTag}
 end
 
 
@@ -118,7 +116,7 @@ function tag_input_checkbox( name::String,
     whichlabel_checked::Union{String,Nothing,Vector{String}} = nothing )  # which (label text) (1st, 2nd ...) option(s) should be checked by default
     # -------------
     # a tag list
-    local res = String[]
+    local res = PairedHtmlTag[]
     # make tags
     for labelstr in keys(options)
         local tmpSingleAttr4input::Vector{String} = String[]
@@ -134,12 +132,12 @@ function tag_input_checkbox( name::String,
                 "value" => add_doublequotations(options[labelstr]),
             )
         ))
-        local out_labtag = new_tag(PairedHtmlTag( "label",
+        local out_labtag = PairedHtmlTag( "label",
             label_id, label_class, label_style, [], Dict(),
-            labelstr * in_radiotag ))
+            labelstr * in_radiotag )
         push!(res, out_labtag)
     end # labelstr
-    return res::Vector{String}
+    return res::Vector{PairedHtmlTag}
 end # tag_input_checkbox
 
 

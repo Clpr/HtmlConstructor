@@ -1,12 +1,12 @@
 # source of page constructor
-module src
+module HtmlConstructor
 
     # types & low-level constructors
-    export SingleHtmlTag, PairedHtmlTag
+    export SingleHtmlTag, PairedHtmlTag, HtmlPage
     # basic generic methods
-    export new_tag, add_doublequotations, add_pairedtags
+    export new_tag, add!, pop!
+    export add_doublequotations, add_pairedtags
     # tag generators (common)
-    export tag_link
     export hr, br, sup, sub, bold, italic, underline, deleteline, tag_font
     export h1, h2, h3, h4, h5, h6
     export tag_div, tag_a, tag_ol, tag_ul
@@ -15,8 +15,9 @@ module src
     # tag for javascripts
     export tag_script, JS_str
     # CSS style constructors
-    export link_css, tag_style
-
+    export link_css, tag_style, CS_str
+    # tag for the head part
+    export tag_meta, tag_link
 
 
 
@@ -48,9 +49,12 @@ include("asset/CssStyles.jl")
 
 
 
+# -------------- tools to construct a page (work flow)
+include("asset/PageConstructor.jl")
 
 
-
+# -------------- tags used in <head> part
+include("asset/TagGenerators_head.jl")
 
 
 
