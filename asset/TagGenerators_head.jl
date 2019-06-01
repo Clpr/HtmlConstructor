@@ -6,14 +6,14 @@
 """
 function tag_meta( ; charset::Union{String,Nothing} = "utf-8", lang::Union{String,Nothing} = "en-us",
     name::Union{String,Nothing} = nothing, scheme::Union{String,Nothing} = nothing, content::Union{String,Nothing} = nothing, http_equiv::Union{String,Nothing} = nothing)
-    local tmppairedattrs = Dict()
+    local tmppairedattrs = Dict{String,String}()
     isa(charset, Nothing) ? nothing : tmppairedattrs["charset"] = charset
     isa(lang, Nothing) ? nothing : tmppairedattrs["lang"] = lang
     isa(name, Nothing) ? nothing : tmppairedattrs["name"] = name
     isa(scheme, Nothing) ? nothing : tmppairedattrs["scheme"] = scheme
     isa(content, Nothing) ? nothing : tmppairedattrs["content"] = content
     isa(http_equiv, Nothing) ? nothing : tmppairedattrs["http-equiv"] = http_equiv
-    return SingleHtmlTag( "meta","","","",[],tmppairedattrs )
+    return SingleHtmlTag( "meta",nothing,nothing,nothing,singleAttributes = String[], pairedAttributes = tmppairedattrs )
 end # tag_meta
 
 
@@ -40,7 +40,7 @@ function tag_link( rel::String, type::String, href::String ;
     )
     isa(hreflang, Nothing) ? nothing : tmppairedattrs["hreflang"] = add_doublequotations(hreflang)
     isa(media   , Nothing) ? nothing : tmppairedattrs["media"] = add_doublequotations(media)
-    return SingleHtmlTag( "link", "", "", "", String[], tmppairedattrs )
+    return SingleHtmlTag( "link", nothing, nothing, nothing, singleAttributes = String[], pairedAttributes = tmppairedattrs )
 end # tag_link
 
 

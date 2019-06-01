@@ -31,15 +31,24 @@ function new_tag( d::PairedHtmlTag )
     # add single attributes
     append!(res, d.singleAttributes)
     # close the tag
-    push!(res, "/>")
+    push!(res, ">")
     # add contents between paired tags & the right tag
-    for tmptag in d.content
-        if isa(tmptag, BlankHtmlTag)
-            push!(res, tmptag.content)
-        elseif isa(tmptag, SingleHtmlTag)
-            push!(res, new_tag(tmptag))
-        else
-            push!(res, new_tag(tmptag)) # NOTE: recursive calling
+    if length(d.content) == 0
+        # if there is no content, just skip it
+        nothing
+    elseif (length(d.content) == 1) & !(isa(d.content[1], PairedHtmlTag))
+        # if there is only one element and it is not a paired tag (only paired tag has content!)
+        push!(res, new_tag(d.content[1]))
+    else
+        # if there is more than one element in the tag`s content, loop and/or recursive stringlize all elements
+        for tmptag in d.content
+            if isa(tmptag, BlankHtmlTag)
+                push!(res, tmptag.content)
+            elseif isa(tmptag, SingleHtmlTag)
+                push!(res, new_tag(tmptag))
+            else
+                push!(res, new_tag(tmptag)) # NOTE: recursive calling
+            end
         end
     end
     # add </tag>
@@ -49,6 +58,31 @@ function new_tag( d::PairedHtmlTag )
 end # new tag
 # --------
 new_tag( d::BlankHtmlTag ) = return (d.content)::String
+
+
+
+
+# ------------------------------ convert a vector of any objects to a list of tags
+"""
+    vecany2vectag( list::Vector{Any} )
+
+convert a vector of string-lize-able elements to a list of tags
+"""
+function vecany2vectag( list::Vector{Any} )
+    local res = AbstractHtmlTag[]
+    for x in list
+        if isa(x, AbstractHtmlTag)
+            push!(res, x)
+        else
+            try
+                push!(res, BlankHtmlTag(string(x)) )
+            catch
+                @error("unsupported element type: $(typeof(x))")
+            end
+        end
+    end
+    return res::Vector{AbstractHtmlTag}
+end  # vecany2vectag
 
 
 
@@ -92,6 +126,16 @@ add a list of new sub-tag members to a given paired tag instance.
 function add!( suptag::PairedHtmlTag, v_subtag::Vector{String} )
     for x in v_subtag; push!(suptag.content, BlankHtmlTag(x) ); end
 end # add
+"""
+    add!( suptag::PairedHtmlTag, v_subtag::Vector{Any} )
+
+add a mixed list of new sub-tag members to a given paired tag instance.
+"""
+function add!( suptag::PairedHtmlTag, v_subtag::Vector{Any} )
+    for x in v_subtag; add!(suptag, x ); end
+end # add
+# -----------------------------------
+
 
 
 
@@ -120,10 +164,18 @@ pop!( d::PairedHtmlTag, k::Int ) = pop!(d.content, k)::AbstractHtmlTag
 
 
 
-
-
-
-
+# ----------------------- StrOrTag -> Tags
+StrOrTag2Tag(content::StrOrTag) = return ( isa(content, String) ? BlankHtmlTag(content) : content )::AbstractHtmlTag
+# ----------------------- quick "empty" tags
+function quickEmptyPairedTag(tagname::String, content::StrOrTag)
+    return PairedHtmlTag(tagname, nothing, nothing, nothing, content = AbstractHtmlTag[StrOrTag2Tag(content),] )
+end # quickEmptyPairedTag
+function quickEmptyPairedTag(tagname::String, content::Vector)
+    return PairedHtmlTag(tagname, nothing, nothing, nothing, content = vecany2vectag(content) )
+end # quickEmptyPairedTag
+function quickEmptySingleTag(tagname::String)
+    return SingleHtmlTag(tagname, nothing, nothing, nothing )
+end # quickEmptyPairedTag
 
 
 
@@ -182,10 +234,6 @@ end # add_doublequotations
 
 
 
-
-# -------------- new blank tag(s)
-new_blankpairedtags( tag::String ) = PairedHtmlTag(tag,"","","",[],Dict(),AbstractHtmlTag[])
-new_blanksingletags( tag::String ) = SingleHtmlTag(tag,"","","",[],Dict())
 
 
 

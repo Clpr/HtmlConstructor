@@ -1,15 +1,6 @@
 # common tag generators
 # NOTE: StrOrTag = Union{String, AbstractHtmlTag}
 
-# ----------------------- StrOrTag -> Tags
-StrOrTag2Tag(content::StrOrTag) = return ( isa(content, String) ? BlankHtmlTag(content) : content )::AbstractHtmlTag
-# ----------------------- quick "empty" tags
-function quickEmptyPairedTag(tagname::String, content::StrOrTag)
-    return PairedHtmlTag(tagname, nothing, nothing, nothing, content = AbstractHtmlTag[StrOrTag2Tag(content),] )
-end # quickEmptyPairedTag
-function quickEmptySingleTag(tagname::String)
-    return PairedHtmlTag(tagname, nothing, nothing, nothing )
-end # quickEmptyPairedTag
 
 
 
@@ -17,20 +8,20 @@ end # quickEmptyPairedTag
 tag_hr() = quickEmptySingleTag("hr")
 tag_br() = quickEmptySingleTag("br")
 # ----------------------- sup & sub
-tag_sup(content::StrOrTag) = quickEmptyPairedTag("sup",content)
-tag_sub(content::StrOrTag) = quickEmptyPairedTag("sub",content)
+tag_sup(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("sup",content)
+tag_sub(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("sub",content)
 # ----------------------- bold font, italic, underline, del
-tag_b(content::StrOrTag) = quickEmptyPairedTag("b",content)
-tag_i(content::StrOrTag) = quickEmptyPairedTag("i",content)
-tag_u(content::StrOrTag) = quickEmptyPairedTag("u",content)
-tag_del(content::StrOrTag) = quickEmptyPairedTag("del",content)
+tag_b(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("b",content)
+tag_i(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("i",content)
+tag_u(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("u",content)
+tag_del(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("del",content)
 # ----------------------- header <h1> - <h6>
-tag_h1(content::StrOrTag) = quickEmptyPairedTag("h1",content)
-tag_h2(content::StrOrTag) = quickEmptyPairedTag("h2",content)
-tag_h3(content::StrOrTag) = quickEmptyPairedTag("h3",content)
-tag_h4(content::StrOrTag) = quickEmptyPairedTag("h4",content)
-tag_h5(content::StrOrTag) = quickEmptyPairedTag("h5",content)
-tag_h6(content::StrOrTag) = quickEmptyPairedTag("h6",content)
+tag_h1(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("h1",content)
+tag_h2(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("h2",content)
+tag_h3(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("h3",content)
+tag_h4(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("h4",content)
+tag_h5(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("h5",content)
+tag_h6(content::Union{StrOrTag,Vector}) = quickEmptyPairedTag("h6",content)
 
 
 

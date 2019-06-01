@@ -14,10 +14,11 @@
 add a pair of <style> tags for your CSS style string.
 """
 tag_style( CssStylesStr::String ; type::String = "text/css" ) = begin
-    return PairedHtmlTag(
-        "style", "", "", "", String[], Dict( "type" => add_doublequotations(type) ), CssStylesStr
-    )
-end
+    return PairedHtmlTag( "style", nothing, nothing, nothing,
+    singleAttributes = String[],
+    pairedAttributes = Dict{String,String}( "type" => add_doublequotations(type) ),
+    content = [BlankHtmlTag(CssStylesStr),]  )
+end # tag_style
 
 
 # ---------------- link to external CSS file

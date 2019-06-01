@@ -61,22 +61,22 @@ sample = """
 # --------- init an html page
 page = HtmlConstructor.HtmlPage("index.html","test page")
 
-
+# ---------
 # I. <head> part
 # new an empty <head></head> tag
-p_head = HtmlConstructor.new_blankpairedtags("head")
+p_head = HtmlConstructor.quickEmptyPairedTag("head","")
 # add members to p_head.content
   # 1. <meta> tag
-  push!(p_head.content, HtmlConstructor.tag_meta(charset="utf-8", lang="en-us") )
+  HtmlConstructor.add!(p_head, HtmlConstructor.tag_meta(charset="utf-8", lang="en-us") )
   # 2. <link> tag
-  push!(p_head.content, HtmlConstructor.link_css(
+  HtmlConstructor.add!(p_head, HtmlConstructor.link_css(
     "//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
   ))
   # 3. <script> tag + JS script
   tmpscript = HtmlConstructor.JS"""
     var test = 123.456;
   """
-  push!(p_head.content, tmpscript)
+  HtmlConstructor.add!(p_head, tmpscript)
   # 4. <style> tag + CSS class def
   tmpscript = HtmlConstructor.CSS"""
     .testcls {
@@ -84,13 +84,27 @@ p_head = HtmlConstructor.new_blankpairedtags("head")
       margin-left : 25%;
     }
   """
-  push!(p_head.content, tmpscript)
+  HtmlConstructor.add!(p_head, tmpscript)
 # add filled <head> to the page
 push!(page.head, p_head)
 
 
 
-println(HtmlConstructor.new_tag(p_head))
+
+# ---------
+# II. <body> part
+p_body = HtmlConstructor.quickEmptyPairedTag("body","")
+# add members
+  # 1. add <h1>, NOTE: add!() method allows mixed-type vector/list as input
+  tmph1 = HtmlConstructor.tag_h1(  [ "Testing ", HtmlConstructor.tag_b("HTML"), " Page" ]  )
+  HtmlConstructor.add!(p_body, tmph1 )
+  # 2.
+
+
+
+
+
+
 
 
 
